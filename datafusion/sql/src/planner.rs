@@ -27,7 +27,7 @@ use datafusion_common::{
 use sqlparser::ast::{ArrayElemTypeDef, ExactNumberInfo};
 use sqlparser::ast::{ColumnDef as SQLColumnDef, ColumnOption};
 use sqlparser::ast::{DataType as SQLDataType, Ident, ObjectName, TableAlias};
-use sqlparser::ast::{TimezoneInfo, Value};
+use sqlparser::ast::TimezoneInfo;
 
 use datafusion_common::TableReference;
 use datafusion_common::{
@@ -105,14 +105,11 @@ impl ValueNormalizer {
         Self { normalize }
     }
 
-    pub fn normalize(&self, value: Value) -> Result<String> {
+    pub fn normalize(&self, value: String) -> String {
         if self.normalize {
-            crate::utils::normalize_value(&value)
+            value.to_ascii_lowercase()
         } else {
-            match crate::utils::value_to_string(&value) {
-                Some(s) => Ok(s),
-                None => internal_err!("Unsupport value type to string: {:?}", value),
-            }
+            value
         }
     }
 }
